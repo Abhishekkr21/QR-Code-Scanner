@@ -3,24 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#AD1DEB" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
     />
     <link rel="stylesheet" href="style.css" />
-    <title>QR Code Scanner</title>
+    <title>QR Code Scanner & Generator</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
   </head>
   <body>
+    <!-- Auth Container -->
+    <div class="auth-container">
+      <!-- Login Form -->
+      <div class="auth-form login-form">
+        <h2>Login</h2>
+        <form id="loginForm">
+          <input type="email" placeholder="Email" required>
+          <input type="password" placeholder="Password" required>
+          <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="#" class="switch-to-register">Register</a></p>
+      </div>
+
+      <!-- Register Form -->
+      <div class="auth-form register-form hidden">
+        <h2>Register</h2>
+        <form id="registerForm">
+          <input type="text" placeholder="Name" required>
+          <input type="email" placeholder="Email" required>
+          <input type="password" placeholder="Password" required>
+          <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="#" class="switch-to-login">Login</a></p>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard hidden">
+      <header class="dashboard-header">
+        <h2>Welcome, <span class="user-name"></span></h2>
+        <button class="logout-btn">Logout</button>
+      </header>
+      
+      <div class="history-panel">
+        <h3>QR Code History</h3>
+        <div class="history-list"></div>
+      </div>
+    </div>
+
+    <!-- Existing QR Scanner/Generator wrapper -->
     <div class="wrapper">
+      <div class="tabs">
+        <button class="scan active">Scan QR</button>
+        <button class="generate">Generate QR</button>
+      </div>
       <form action="#" id="form1">
-        <input type="file" id="file" hidden>
+        <input type="file" id="file" hidden accept="image/*">
         <img src="" alt="qr-code">
         <div class="content">
           <i class="fas fa-cloud-upload"></i>
           <p id="ptext">Upload QR Code to Scan</p>
+          <p class="hint">or drag and drop</p>
         </div>
       </form>
+      <div class="generate-form">
+        <input type="text" class="qr-input" placeholder="Enter text or URL">
+        <button class="generate-btn">Generate QR Code</button>
+      </div>
       <div class="details">
         <textarea disabled id="textArea"></textarea>
         <div class="buttons">
@@ -28,9 +82,20 @@
           <button class="copy">Copy Text</button>
         </div>
       </div>
+      <div class="loading-spinner"></div>
     </div>
 
     <div id="toasts"></div>
-    <script src="index.js"></script>
+    <script type="module" src="script.js"></script>
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker not registered', err));
+            });
+        }
+    </script>
   </body>
 </html>
